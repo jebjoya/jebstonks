@@ -12,8 +12,17 @@ ticker = yf.Ticker(tickerString)
 startDate = dt.datetime.strptime(startDateString, "%Y-%m-%d").date()
 endDate = dt.datetime.strptime(endDateString, "%Y-%m-%d").date()
 
-dailyYahooVolumeData = ticker.history(interval="1d", start=startDate, end=endDate)["Volume"]
+dailyYahooVolumeData = ticker.history(interval="1d", start=startDate+dt.timedelta(days=1), end=endDate)["Volume"]
+
+minVolumes = []
 
 for day in [d.date() for d in pd.date_range(start=startDate, end=endDate-dt.timedelta(days=1))]:
     minVolumesYahoo = ticker.history(interval="1m", start=day, end=day+dt.timedelta(days=1))
-    print(day, "-", minVolumesYahoo["Volume"].sum())
+    minVolumes.append(minVolumesYahoo["Volume"].sum())
+
+dailyYahooVolumeData = dailyYahooVolumeData.T.reset_index()
+dailyYahooVolumeData['dailyVolume'] = dailyYahooVolumeData['Volume']
+dailyYahooVolumeData = dailyYahooVolumeData.drop('Volume',1)
+dailyYahooVolumeData['minuteVolume'] = minVolumes
+
+print(dailyYahooVolumeData)
