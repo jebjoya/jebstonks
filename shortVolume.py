@@ -3,25 +3,12 @@ import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-from stonklib import download, getOrDownloadFinra
+from stonklib import download, returnFinraShortData
 
 def sma(length, source):
     return source.rolling(length).apply(lambda val: sum(val)/length, raw=True)
 
-today = datetime.date.today()
-
-tracker = today - datetime.timedelta(days=60)
-
-while tracker < today:
-    fileLocationString = getOrDownloadFinra(tracker)
-    if fileLocationString:
-        tdf = pd.read_csv(fileLocationString, delimiter = "|")
-        tdf = tdf[tdf["Date"] > 100000]
-        try:
-            df = pd.concat([df, tdf])
-        except NameError:
-            df = tdf
-    tracker += datetime.timedelta(days=1)
+df = returnFinraShortData(datetime.date(2021,1,7))
 
 df["ShortVolumePercent"] = df["ShortVolume"] * 100.0 / df["TotalVolume"]
 df["Date"] = pd.to_datetime(df["Date"], format="%Y%m%d")

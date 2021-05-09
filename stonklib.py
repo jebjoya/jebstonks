@@ -1,6 +1,7 @@
 import os
 import requests
-
+import datetime
+import pandas as pd
 
 def download(url: str, dest_folder: str):
     if not os.path.exists(dest_folder):
@@ -29,4 +30,18 @@ def getOrDownloadFinra(d):
             return 'dataSet/CNMSshvol' + datestring + ".txt"
         else:
             return False
+
+def returnFinraShortData(fromDate, toDate=datetime.date.today()):
+    now = fromDate
+    while now < toDate:
+        fileLocationString = getOrDownloadFinra(now)
+        if fileLocationString:
+            tdf = pd.read_csv(fileLocationString, delimiter = "|")
+            tdf = tdf[tdf["Date"] > 100000]
+            try:
+                df = pd.concat([df, tdf])
+            except NameError:
+                df = tdf
+        now += datetime.timedelta(days=1)
+    return df
 
