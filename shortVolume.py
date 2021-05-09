@@ -1,52 +1,19 @@
-import os
-import requests
 import datetime
 import pandas as pd
 import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
+from stonklib import download, getOrDownloadFinra
 
 def sma(length, source):
     return source.rolling(length).apply(lambda val: sum(val)/length, raw=True)
-
-def download(url: str, dest_folder: str):
-    if not os.path.exists(dest_folder):
-        os.makedirs(dest_folder)  # create folder if it does not exist
-
-    filename = url.split('/')[-1].replace(" ", "_")  # be careful with file names
-    file_path = os.path.join(dest_folder, filename)
-
-    r = requests.get(url, stream=True)
-    if r.ok:
-        #print("saving to", os.path.abspath(file_path))
-        with open(file_path, 'wb') as f:
-            for chunk in r.iter_content(chunk_size=1024 * 8):
-                if chunk:
-                    f.write(chunk)
-                    f.flush()
-                    os.fsync(f.fileno())
-    else:  # HTTP status code 4XX/5XX
-        return True #print("Download failed: status code {}\n{}".format(r.status_code, r.text))
-
-
-def getOrDownload(d):
-    datestring = d.strftime("%Y%m%d")
-    try:
-        k = open('dataSet/CNMSshvol' + datestring + ".txt",'r')
-        k.close()
-        return 'dataSet/CNMSshvol' + datestring + ".txt"
-    except IOError:
-        if not download("http://regsho.finra.org/CNMSshvol" + datestring + ".txt", dest_folder="dataSet"):
-            return 'dataSet/CNMSshvol' + datestring + ".txt"
-        else:
-            return False
 
 today = datetime.date.today()
 
 tracker = today - datetime.timedelta(days=60)
 
 while tracker < today:
-    fileLocationString = getOrDownload(tracker)
+    fileLocationString = getOrDownloadFinra(tracker)
     if fileLocationString:
         tdf = pd.read_csv(fileLocationString, delimiter = "|")
         tdf = tdf[tdf["Date"] > 100000]
