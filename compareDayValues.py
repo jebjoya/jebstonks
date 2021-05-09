@@ -19,7 +19,7 @@ dailyYahooVolumeData = ticker.history(interval="1d", start=startDate+dt.timedelt
 minVolumes = []
 
 for day in [d.date() for d in pd.date_range(start=startDate, end=endDate-dt.timedelta(days=1))]:
-    minVolumesYahoo = ticker.history(interval="1m", start=day, end=day+dt.timedelta(days=1))
+    minVolumesYahoo = ticker.history(interval="1m", start=day, end=day+dt.timedelta(days=1), prepost=True)
     if minVolumesYahoo["Volume"].sum() != 0:
         minVolumes.append(minVolumesYahoo["Volume"].sum())
 
