@@ -2,6 +2,8 @@ import os
 import requests
 import datetime
 import pandas as pd
+import yfinance as yf
+import numpy as np
 
 def download(url: str, dest_folder: str):
     if not os.path.exists(dest_folder):
@@ -45,3 +47,23 @@ def returnFinraShortData(fromDate, toDate=datetime.date.today()):
         now += datetime.timedelta(days=1)
     return df
 
+def getMinGain(tickerString, date):
+    ticker = yf.Ticker(tickerString)
+    dateString = datetime.date.strftime(date, format="%Y-%m-%d")
+
+    calls = ticker.option_chain(dateString)[0]
+    puts = ticker.option_chain(dateString)[1]
+
+    minGainValue = np.infty
+
+    for price in np.arange(calls['strike'].min(), calls['strike'].max(),0.5):
+        relevantCalls = calls[calls['strike'] < price]
+        relevantPuts = puts[puts['strike'] > price]
+        callValue = (relevantCalls['openInterest'] * 100 * (price - relevantCalls['strike'])).sum()
+        putValue = (relevantPuts['openInterest'] * 100 * (relevantPuts['strike'] - price)).sum()
+        totalValue = callValue + putValue
+        if totalValue < minGainValue:
+            minGainValue = totalValue
+            minGain = price
+
+    return round(minGain,2)
