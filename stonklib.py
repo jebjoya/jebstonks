@@ -67,3 +67,7 @@ def getMinGain(tickerString, date):
             minGain = price
 
     return round(minGain,2)
+
+def calculateOBV(volume, close):
+    lastClose = close.shift(1)
+    
