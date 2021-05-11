@@ -13,9 +13,9 @@ df = returnFinraShortData(datetime.date(2021,1,7))
 df["ShortVolumePercent"] = df["ShortVolume"] * 100.0 / df["TotalVolume"]
 df["Date"] = pd.to_datetime(df["Date"], format="%Y%m%d")
 
-sdf = df[(df["Date"] > "2021-04-16") & (df["ShortVolumePercent"] >= 50) & (df["ShortVolumePercent"] <= 80)]
+#sdf = df[(df["Date"] > "2021-04-16") & (df["ShortVolumePercent"] >= 50) & (df["ShortVolumePercent"] <= 80)]
 
-print(sdf["Symbol"].value_counts().head(25))
+print(df[df["Symbol"]=="GME"].sort_values("ShortVolumePercent",ascending=False).head(20))
 
 
 #fig = go.Figure()

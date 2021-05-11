@@ -2,6 +2,6 @@ import yfinance as yf
 
 t = yf.Ticker("GME")
 
-x = t.history(period="1d", interval="1m", prepost=True)
+x = t.history(period="1mo",interval="1d")
 
-print(x[x['Volume']!=0])
+print(x)
