@@ -8,7 +8,7 @@ from datetime import date
 
 # start date, end date exclusive
 tickerString = "GME"
-startDateString = '2021-01-07'
+startDateString = '2021-01-01'
 endDateString = '2021-05-11'
 # end of editable
 
@@ -16,7 +16,7 @@ ticker = yf.Ticker(tickerString)
 startDate = dt.datetime.strptime(startDateString, "%Y-%m-%d").date()
 endDate = dt.datetime.strptime(endDateString, "%Y-%m-%d").date()
 
-df = ticker.history(interval="1d", start=startDate, end=endDate)
+df = ticker.history(interval="1h", start=startDate, end=endDate)
 df["Previous Close"] = df["Close"].shift(1)
 df["Previous Volume"] = df["Volume"].shift(1)
 df["Price Movement"] = df["Close"] - df["Previous Close"]
@@ -40,9 +40,10 @@ fig.add_trace(go.Line(x=df.index, y=df["OBV"], name="OBV"),secondary_y=True)
 fig.update_xaxes(
     rangebreaks=[
         dict(bounds=["sat", "mon"]),
-        dict(values=["2021-04-02", "2021-02-15", "2021-01-18", "2021-01-01", "2020-12-25", "2020-11-26"])
+        dict(bounds=[16, 9], pattern="hour"),
     ]
 )
+
 
 
 fig.update_layout(xaxis_rangeslider_visible=False,

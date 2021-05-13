@@ -5,7 +5,7 @@ import plotly.graph_objects as go
 from plotly.subplots import make_subplots
 from datetime import date
 
-gme = yf.Ticker("BTC-USD")
+gme = yf.Ticker("GME")
 df = gme.history(period="1y")
 
 def sma(length, source):
@@ -78,12 +78,12 @@ fig.add_hline(50, row=5, col=1)
 fig.add_hline(70, row=5, col=1)
 fig.add_hline(30, row=5, col=1)
 
-#fig.update_xaxes(
-#    rangebreaks=[
-#        dict(bounds=["sat", "mon"]),
-#        dict(values=["2021-04-02", "2021-02-15", "2021-01-18", "2021-01-01", "2020-12-25", "2020-11-26"])
-#    ]
-#)
+fig.update_xaxes(
+    rangebreaks=[
+        dict(bounds=["sat", "mon"]),
+        dict(values=["2021-04-02", "2021-02-15", "2021-01-18", "2021-01-01", "2020-12-25", "2020-11-26"])
+    ]
+)
 
 
 fig.update_layout(xaxis_rangeslider_visible=False,

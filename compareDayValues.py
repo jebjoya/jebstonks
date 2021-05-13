@@ -6,7 +6,7 @@ import plotly.graph_objects as go
 
 # start date inclusive, end date exclusive
 tickerString = "GME"
-startDateString = '2021-04-01'
+startDateString = '2021-02-01'
 endDateString = '2021-05-08'
 # end of editable
 
@@ -47,8 +47,8 @@ results = pd.merge(yahooData, finraData, on="Date")
 fig=go.Figure()
 
 fig.add_trace(go.Line(x=results['Date'], y=results['dailyVolume'], name="Daily Yahoo Volume"))
-fig.add_trace(go.Line(x=results['Date'], y=results['minuteVolume'], name="Minute Yahoo Volume"))
-fig.add_trace(go.Line(x=results['Date'], y=results['finraShort'], name="Finra Short Volume"))
-fig.add_trace(go.Line(x=results['Date'], y=results['finraVolume'], name="Finra Total Volume"))
+fig.add_trace(go.Line(x=results['Date'], y=results['minuteVolume'], name="Hourly Yahoo Volume"))
+#fig.add_trace(go.Line(x=results['Date'], y=results['finraShort'], name="Finra Short Volume"))
+#fig.add_trace(go.Line(x=results['Date'], y=results['finraVolume'], name="Finra Total Volume"))
 
 fig.show()
