@@ -33,10 +33,38 @@ def getOrDownloadFinra(d):
         else:
             return False
 
+def getOrDownloadNYSEShort(d,exchange):
+    datestring = d.strftime("%Y%m%d")
+    yearstring = d.strftime("%Y")
+    yearmonthstring = d.strftime("%Y%m")
+    try:
+        k = open(exchange + 'DataSet/'+ exchange + 'shvol' + datestring + ".txt",'r')
+        k.close()
+        return exchange + 'DataSet/'+ exchange + 'shvol' + datestring + ".txt"
+    except IOError:
+        if not download("https://ftp.nyse.com/ShortData/" + exchange + "shvol/" + exchange + "shvol" + yearstring + "/" + exchange + "shvol" + yearmonthstring + "/" + exchange + "shvol" + datestring + ".txt", dest_folder=exchange + "DataSet"):
+            return exchange + 'DataSet/'+ exchange + 'shvol' + datestring + ".txt"
+        else:
+            return False
+
 def returnFinraShortData(fromDate, toDate=datetime.date.today()):
     now = fromDate
     while now < toDate:
         fileLocationString = getOrDownloadFinra(now)
+        if fileLocationString:
+            tdf = pd.read_csv(fileLocationString, delimiter = "|")
+            tdf = tdf[tdf["Date"] > 100000]
+            try:
+                df = pd.concat([df, tdf])
+            except NameError:
+                df = tdf
+        now += datetime.timedelta(days=1)
+    return df
+
+def returnNYSEShortData(exchange, fromDate, toDate=datetime.date.today()):
+    now = fromDate
+    while now < toDate:
+        fileLocationString = getOrDownloadNYSEShort(now,exchange)
         if fileLocationString:
             tdf = pd.read_csv(fileLocationString, delimiter = "|")
             tdf = tdf[tdf["Date"] > 100000]

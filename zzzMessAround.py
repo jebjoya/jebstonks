@@ -1,7 +1,4 @@
-import yfinance as yf
+from datetime import date
+from stonklib import returnNYSEShortData
 
-t = yf.Ticker("GME")
-
-x = t.history(period="1d", interval="5m",start="2021-05-05", end="2021-05-06")
-
-print(x.head(50))
+print(returnNYSEShortData("ARCA",date(2021,5,1)))
