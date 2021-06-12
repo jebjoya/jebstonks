@@ -14,7 +14,7 @@ amc_morning = amc_prices[amc_prices.index <= "2021-06-11 12:30:00.000"]
 amc_afternoon = amc_prices[amc_prices.index > "2021-06-11 12:30:00.000"]
 
 # And let's take a quick look at how well they're correlated
-print(pearsonr(gme_morning,amc_morning))
-print(pearsonr(gme_afternoon,amc_afternoon))
+print("Morning Pearson:",pearsonr(gme_morning,amc_morning)[0])
+print("Afternoon Pearson:",pearsonr(gme_afternoon,amc_afternoon)[0])
 
 
