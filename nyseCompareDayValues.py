@@ -42,6 +42,7 @@ print(finraData)
 finraData['Date'] = pd.to_datetime(finraData['Date'], format="%Y%m%d")
 finraData['finraShort'] = finraData['Short Volume']
 finraData['finraVolume'] = finraData['Total Volume']
+finraData['finraPercent'] = finraData['finraShort'] / finraData['finraVolume']
 
 finraData = finraData.drop(['Market','Short Exempt Volume','Symbol','Short Volume','Total Volume'],1)
 results = pd.merge(yahooData, finraData, on="Date")
@@ -50,7 +51,8 @@ fig=go.Figure()
 
 #fig.add_trace(go.Line(x=results['Date'], y=results['dailyVolume'], name="Daily Yahoo Volume"))
 #fig.add_trace(go.Line(x=results['Date'], y=results['minuteVolume'], name="Hourly Yahoo Volume"))
-fig.add_trace(go.Line(x=results['Date'], y=results['finraShort'], name="NYSE Short Volume"))
-fig.add_trace(go.Line(x=results['Date'], y=results['finraVolume'], name="NYSE Total Volume"))
+#fig.add_trace(go.Line(x=results['Date'], y=results['finraShort'], name="NYSE Short Volume"))
+#fig.add_trace(go.Line(x=results['Date'], y=results['finraVolume'], name="NYSE Total Volume"))
+fig.add_trace(go.Line(x=results['Date'], y=results['finraPercent'], name="NYSE Short Percentage"))
 
 fig.show()

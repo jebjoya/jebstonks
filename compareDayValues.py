@@ -1,13 +1,13 @@
 import yfinance as yf
 import datetime as dt
 import pandas as pd
-from stonklib import returnFinraShortData
+from stonklib import returnFinraShortData, getFTDTheoryDates
 import plotly.graph_objects as go
 
 # start date inclusive, end date exclusive
-tickerString = "AAPL"
-startDateString = '2021-04-01'
-endDateString = '2021-05-08'
+tickerString = "GME"
+startDateString = '2021-01-01'
+endDateString = '2021-05-18'
 # end of editable
 
 ticker = yf.Ticker(tickerString)
@@ -40,15 +40,26 @@ finraData = finraData[finraData['Symbol'] == tickerString]
 finraData['Date'] = pd.to_datetime(finraData['Date'], format="%Y%m%d")
 finraData['finraShort'] = finraData['ShortVolume']
 finraData['finraVolume'] = finraData['TotalVolume']
+finraData['finraPercent'] = finraData['finraShort'] / finraData['finraVolume']
 
 finraData = finraData.drop(['Market','ShortExemptVolume','Symbol','ShortVolume','TotalVolume'],1)
 results = pd.merge(yahooData, finraData, on="Date")
 
 fig=go.Figure()
 
-fig.add_trace(go.Line(x=results['Date'], y=results['dailyVolume'], name="Daily Yahoo Volume"))
-fig.add_trace(go.Line(x=results['Date'], y=results['minuteVolume'], name="Hourly Yahoo Volume"))
+#fig.add_trace(go.Line(x=results['Date'], y=results['dailyVolume'], name="Daily Yahoo Volume"))
+#fig.add_trace(go.Line(x=results['Date'], y=results['minuteVolume'], name="Hourly Yahoo Volume"))
 #fig.add_trace(go.Line(x=results['Date'], y=results['finraShort'], name="Finra Short Volume"))
 #fig.add_trace(go.Line(x=results['Date'], y=results['finraVolume'], name="Finra Total Volume"))
+fig.add_trace(go.Line(x=results['Date'], y=results['finraPercent'], name="Finra Short Percent"))
+
+optionDates = [dt.date(2021,1,15),dt.date(2021,2,5),dt.date(2021,4,16)]
+for d in optionDates:
+    l = getFTDTheoryDates(d)
+    for x in l:
+        if x < endDate:
+            fig.add_vline(x=dt.datetime.combine(x,dt.datetime.min.time()).timestamp() * 1000, annotation_text=x.strftime("%Y-%m-%d"))
+
+
 
 fig.show()

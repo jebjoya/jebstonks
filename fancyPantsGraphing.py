@@ -3,7 +3,8 @@ import pandas as pd
 import numpy as np
 import plotly.graph_objects as go
 from plotly.subplots import make_subplots
-from datetime import date
+from datetime import date, datetime
+from stonklib import getFTDTheoryDates
 
 gme = yf.Ticker("GME")
 df = gme.history(period="1y")
@@ -77,6 +78,13 @@ fig.add_trace(go.Line(x = df.index, y = df['rsi'], name = "RSI (14d)"), row=5, c
 fig.add_hline(50, row=5, col=1)
 fig.add_hline(70, row=5, col=1)
 fig.add_hline(30, row=5, col=1)
+
+optionDates = [date(2021,1,15),date(2021,2,5),date(2021,4,16)]
+for d in optionDates:
+    l = getFTDTheoryDates(d)
+    for x in l:
+        if x < date.today():
+            fig.add_vline(x=datetime.combine(x,datetime.min.time()).timestamp() * 1000, annotation_text=x.strftime("%Y-%m-%d"))
 
 fig.update_xaxes(
     rangebreaks=[
