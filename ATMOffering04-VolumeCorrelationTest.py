@@ -20,4 +20,4 @@ for day in most_correlated_days:
     amc_am = sum(amc_data[amc_data.index <= (day.strftime("%Y-%m-%d") + " 12:30:00.000")])
     amc_pm = sum(amc_data[amc_data.index > (day.strftime("%Y-%m-%d") + " 12:30:00.000")])
     amc_ratio = amc_am * 1.0 / (amc_am + amc_pm)
-    print("GME:",gme_ratio,"AMC:",amc_ratio)
+    print("Date:",start_date,"GME:",gme_ratio,"AMC:",amc_ratio)
